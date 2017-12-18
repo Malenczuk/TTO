@@ -38,7 +38,7 @@ public enum Sections {
     public String toRegex() {
         switch (this) {
             case Section:
-                return "^DZIAŁ [IVXLCDM]+";
+                return "^DZIAŁ (\\S+)";
             case Chapter:
                 return "^Rozdział (\\S+)";
             case SubChapter:

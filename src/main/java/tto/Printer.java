@@ -1,16 +1,20 @@
 package tto;
 
+import com.frequal.romannumerals.Converter;
+
+import java.text.ParseException;
 import java.util.ArrayList;
 
 public class Printer {
     private ArrayList<String> toPrint = new ArrayList<>();
     private Options options;
+    private Converter converter = new Converter();
 
     public Printer(Options options) {
         this.options = options;
     }
 
-    public ArrayList<String> print(ObjectText objectText) {
+    public ArrayList<String> print(ObjectText objectText) throws ParseException{
         if (options.optionSet.has("Table")) {
             contentPage(objectText);
         } else {
@@ -19,7 +23,7 @@ public class Printer {
         return toPrint;
     }
 
-    private void contentPage(ObjectText node) {
+    private void contentPage(ObjectText node) throws ParseException{
         Sections section;
         if (options.optionSet.has("Section")) {
             node = findObject(node, options.optionSet.valueOf("Section").toString(), section = Sections.Section, searchDepth(node, section));
@@ -32,7 +36,7 @@ public class Printer {
         }
     }
 
-    private void rangeOfSections(ObjectText node) {
+    private void rangeOfSections(ObjectText node) throws ParseException{
         Sections section = node.section;
         String[] range = null;
         Sections rangeSection = null;
@@ -73,8 +77,8 @@ public class Printer {
     }
 
 
-    private ObjectText findObject(ObjectText node, String index, Sections section, int depth) {
-        if (node.section == section && node.index.equals(index)) return node;
+    private ObjectText findObject(ObjectText node, String index, Sections section, int depth) throws ParseException {
+        if (node.section == section && (node.index.equals(index) || checkRoman(node.index, index))) return node;
         if (node.section.ordinal() < depth){
             ObjectText found = null;
             for (ObjectText subNode : node.subSections) {
@@ -82,6 +86,13 @@ public class Printer {
             }
         }
         return null;
+    }
+
+    private boolean checkRoman(String nindex, String ind) throws ParseException{
+        if(ind.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")){
+            return nindex.equals(Integer.toString(converter.toNumber(ind)));
+        }
+        return false;
     }
 
     private void printSection(ObjectText node) {

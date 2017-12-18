@@ -5,19 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 class PrinterTest {
 
     @Test
-    void print() throws IOException, ArgumentException {
+    void print() throws IOException, ArgumentException, ParseException {
         String[] test1 = {"-F", "src" + File.separator + "test" + File.separator + "java" + File.separator + "tto" + File.separator + "test.txt", "-T"};
-        String[] testtt = {"USTAWA", "z dnia 16 lutego 2007 r.", "o ochronie konkurencji i konsumentów", "DZIAŁ I",
-                "Przepisy ogólne", "Rozdział 1", "Zakaz nadużywania pozycji dominującej", "Art. 1.", "1.",
-                "Ustawa określa warunki rozwoju i ochrony", "konkurencji oraz zasady", "1)",
-                "umów, w szczególności licencji, a także innych niż umowy praktyk", "a)",
-                "informacji technicznych lub technologicznych,"
-        };
         Options options = new Options(test1);
         Parser parser = new Parser(options.optionSet.valueOf("File").toString());
         ObjectText node = parser.parse(Sections.File, parser.prepareFile());

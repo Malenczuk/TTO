@@ -1,17 +1,19 @@
 package tto;
 
+import com.frequal.romannumerals.Converter;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Arrays;
 
 public class Options {
     public final OptionSet optionSet;
     public final OptionParser optionParser;
 
-    public Options(String[] args) throws IOException, ArgumentException, OptionException {
+    public Options(String[] args) throws IOException, ArgumentException, OptionException, ParseException {
         optionParser = new OptionParser();
         final String[] fileOptions = {"F", "File"};
         optionParser.acceptsAll(Arrays.asList(fileOptions), "Path and name of file (required)").withRequiredArg().required();
@@ -40,7 +42,7 @@ public class Options {
     }
 
 
-    private void checkOptions() throws IOException, ArgumentException {
+    private void checkOptions() throws IOException, ArgumentException, ParseException {
         if (optionSet.nonOptionArguments().size() > 0) {
             optionParser.printHelpOn(System.out);
             String message = "Wrong arguments: ";
@@ -52,11 +54,21 @@ public class Options {
         if (optionSet.has("help")) optionParser.printHelpOn(System.out);
 
         Sections section = Sections.File;
-        boolean range = false;
+        boolean hasRange = false;
         while ((section = section.next()) != null) {
             if (optionSet.hasArgument(section.toString()) && optionSet.valueOf(section.toString()).toString().matches("(\\D*\\d*)+[-](\\D*\\d*)+")) {
-                if (range) throw new ArgumentException("Only the last section's argument can be a range");
-                range = true;
+                String[] ranges = optionSet.valueOf(section.toString()).toString().split("[-]");
+                if (optionSet.valueOf(section.toString()).toString().matches("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})[-]M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")) {
+                    Converter converter = new Converter();
+                    if (converter.toNumber(ranges[0]) > converter.toNumber(ranges[1]))
+                        throw new ArgumentException(optionSet.valueOf(section.toString()) + " seconds index must be equal or greater than first");
+                }
+                if (optionSet.valueOf(section.toString()).toString().matches("^(\\d)+[-](\\d)+$"))
+                    if (Integer.parseInt(ranges[0]) > Integer.parseInt(ranges[1]))
+                        throw new ArgumentException(optionSet.valueOf(section.toString()) + " seconds index must be equal or greater than first");
+
+                if (hasRange) throw new ArgumentException("Only the last section's argument can be a range");
+                hasRange = true;
             }
 
 

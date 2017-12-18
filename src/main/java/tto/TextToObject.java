@@ -3,6 +3,7 @@ package tto;
 import joptsimple.OptionException;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 public class TextToObject {
@@ -20,7 +21,7 @@ public class TextToObject {
                     }
                 }
             }
-        } catch (IOException | OptionException | ArgumentException e) {
+        } catch (IOException | OptionException | ArgumentException | ParseException e) {
             System.err.println(e.getMessage());
         }
     }
