@@ -105,4 +105,26 @@ public enum Sections {
         }
     }
 
+    public Sections prev() {
+        switch (this) {
+            case File:
+                return null;
+            case Section:
+                return File;
+            case Chapter:
+                return Section;
+            case SubChapter:
+                return Chapter;
+            case Article:
+                return SubChapter;
+            case Point:
+                return Article;
+            case SubPoint:
+                return Point;
+            case Character:
+                return SubPoint;
+            default:
+                return null;
+        }
+    }
 }

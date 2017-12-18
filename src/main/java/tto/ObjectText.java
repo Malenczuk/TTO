@@ -34,27 +34,4 @@ public class ObjectText {
         }
         return index;
     }
-
-
-    public void indexPrint() {
-        if (!this.section.checkIfNewLine()) {
-            System.out.println(this.section.sectionIndex(this.index));
-            if (this.title != null) System.out.println(this.title);
-        } else System.out.print(this.section.sectionIndex(this.index));
-
-    }
-
-    public void elemPrint() {
-        this.indexPrint();
-        for (String x : this.text) {
-            System.out.println(" " + x);
-        }
-    }
-
-    public void subPrint() {
-        this.elemPrint();
-        for (ObjectText x : this.subSections) {
-            x.subPrint();
-        }
-    }
 }

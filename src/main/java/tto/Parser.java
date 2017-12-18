@@ -16,7 +16,7 @@ public class Parser {
         this.filePath = filePath;
     }
 
-    public ArrayList<String> prepareFile() {
+    public ArrayList<String> prepareFile(){
         BufferedReader reader = null;
         String line = null;
         try {
@@ -31,9 +31,10 @@ public class Parser {
                 }
             }
         } catch (FileNotFoundException e) {
+            System.err.println("File Not Found");
             return null;
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         } finally {
             try {
                 if (reader != null)
@@ -95,12 +96,12 @@ public class Parser {
             }
         }
 
-        ArrayList<ObjectText> subSections = createSubTexts(subText, i);
+        ArrayList<ObjectText> subSections = createSubSections(subText, i);
 
         return new ObjectText(nSection, index, title, text, subSections);
     }
 
-    private ArrayList<ObjectText> createSubTexts(ArrayList<String> subText, int i) {
+    private ArrayList<ObjectText> createSubSections(ArrayList<String> subText, int i) {
         ArrayList<ObjectText> subSections = new ArrayList<>();
         Sections section = Sections.Section;
         while (section != null && subSections.isEmpty()) {
