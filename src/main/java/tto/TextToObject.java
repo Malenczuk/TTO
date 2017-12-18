@@ -17,7 +17,7 @@ public class TextToObject {
                     Printer printer = new Printer(options);
                     for (String x : printer.print(OT)) {
                         System.out.println(x);
-                    }
+                    }`
                 }
             }
         } catch (IOException | OptionException | ArgumentException e) {

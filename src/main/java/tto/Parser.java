@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Parser {
     private ArrayList<String> file = new ArrayList<>();
@@ -51,7 +52,7 @@ public class Parser {
         Matcher matcher;
         while (section != null) {
             if (line.matches(section.toRegex() + "(\\s+).+")) {
-                matcher = section.toPattern().matcher(line);
+                matcher = Pattern.compile(section.toRegex()).matcher(line);
                 if (matcher.find()) {
                     this.file.add(matcher.group());
                     line = (line.replaceFirst(section.toRegex() + "(\\s*)", ""));

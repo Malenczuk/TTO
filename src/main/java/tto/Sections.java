@@ -14,14 +14,14 @@ public enum Sections {
 
     public String sectionIndex(String index) {
         switch (this) {
-            case File:
-                return index;
+//            case File:
+//                return index;
             case Section:
                 return "DZIAŁ " + index;
             case Chapter:
                 return "Rozdział " + index;
-            case SubChapter:
-                return index;
+//            case SubChapter:
+//                return index;
             case Article:
                 return "Art. " + index + ".";
             case Point:
@@ -31,7 +31,7 @@ public enum Sections {
             case Character:
                 return index + ")";
             default:
-                return "";
+                return index;
         }
     }
 
@@ -56,26 +56,6 @@ public enum Sections {
         }
     }
 
-    public Pattern toPattern() {
-        switch (this) {
-            case Section:
-                return Pattern.compile(this.toRegex());
-            case Chapter:
-                return Pattern.compile(this.toRegex());
-            case SubChapter:
-                return Pattern.compile(this.toRegex());
-            case Article:
-                return Pattern.compile(this.toRegex());
-            case Point:
-                return Pattern.compile(this.toRegex());
-            case SubPoint:
-                return Pattern.compile(this.toRegex());
-            case Character:
-                return Pattern.compile(this.toRegex());
-            default:
-                return Pattern.compile("");
-        }
-    }
     public boolean checkIfTitle() {
         return (this == Section || this == Chapter);
     }
@@ -107,8 +87,8 @@ public enum Sections {
 
     public Sections prev() {
         switch (this) {
-            case File:
-                return null;
+//            case File:
+//                return null;
             case Section:
                 return File;
             case Chapter:
