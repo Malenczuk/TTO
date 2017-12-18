@@ -24,15 +24,15 @@ public class Options {
         final String[] characterOptions = {"c", "Character"};
         optionParser.acceptsAll(Arrays.asList(characterOptions), "Index or range of Character to print (requires Article)").withRequiredArg();
         final String[] subPointOptions = {"s", "SubPoint"};
-        optionParser.acceptsAll(Arrays.asList(subPointOptions), "Index or range SubPoint to print (requires Article)").withRequiredArg();
+        optionParser.acceptsAll(Arrays.asList(subPointOptions), "Index or range of SubPoint to print (requires Article)").withRequiredArg();
         final String[] pointOptions = {"P", "Point"};
-        optionParser.acceptsAll(Arrays.asList(pointOptions), "Index or range Point to print (requires Article)").withRequiredArg();
+        optionParser.acceptsAll(Arrays.asList(pointOptions), "Index or range of Point to print (requires Article)").withRequiredArg();
         final String[] articleOptions = {"A", "Article"};
-        optionParser.acceptsAll(Arrays.asList(articleOptions), "Index or range Article to print").requiredIf("Point", "SubPoint", "Character").withRequiredArg();
+        optionParser.acceptsAll(Arrays.asList(articleOptions), "Index or range of Article to print").requiredIf("Point", "SubPoint", "Character").withRequiredArg();
         final String[] chapterOptions = {"C", "Chapter"};
-        optionParser.acceptsAll(Arrays.asList(chapterOptions), "Index or range Chapter to print").withRequiredArg();
+        optionParser.acceptsAll(Arrays.asList(chapterOptions), "Index or range of Chapter to print").withRequiredArg();
         final String[] sectionOptions = {"S", "Section"};
-        optionParser.acceptsAll(Arrays.asList(sectionOptions), "Index or range Section to print").withRequiredArg();
+        optionParser.acceptsAll(Arrays.asList(sectionOptions), "Index or range Section to print (works with table of contents)").withRequiredArg();
         final String[] helpOptions = {"h", "help"};
         optionParser.acceptsAll(Arrays.asList(helpOptions), "Display help/usage information").forHelp();
         optionParser.allowsUnrecognizedOptions();
@@ -66,7 +66,9 @@ public class Options {
                 if (optionSet.valueOf(section.toString()).toString().matches("^(\\d)+[-](\\d)+$"))
                     if (Integer.parseInt(ranges[0]) > Integer.parseInt(ranges[1]))
                         throw new ArgumentException(optionSet.valueOf(section.toString()) + " seconds index must be equal or greater than first");
-
+                if (optionSet.valueOf(section.toString()).toString().matches("^(\\D)[-](\\D)$"))
+                    if (Character.getNumericValue(ranges[0].toCharArray()[0]) > Character.getNumericValue(ranges[1].toCharArray()[0]))
+                        throw new ArgumentException(optionSet.valueOf(section.toString()) + " seconds index must be equal or greater than first");
                 if (hasRange) throw new ArgumentException("Only the last section's argument can be a range");
                 hasRange = true;
             }
