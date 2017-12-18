@@ -117,13 +117,13 @@ public class Printer {
         }
     }
 
-    private boolean printRangeOfSection(ObjectText node, String from, String to, Sections section, boolean inRange) {
+    private boolean printRangeOfSection(ObjectText node, String from, String to, Sections section, boolean inRange) throws ParseException{
         if (node.section.equals(section)) {
-            if (node.index.equals(from))
+            if (node.index.equals(from) || checkRoman(node.index, from))
                 inRange = true;
             if (inRange)
                 printSection(node);
-            if (node.index.equals(to))
+            if (node.index.equals(to) || checkRoman(node.index, to))
                 inRange = false;
             return inRange;
         }
