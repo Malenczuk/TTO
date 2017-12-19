@@ -17,3 +17,5 @@ required/requires|Short|Long|Arguments|Description
 **Range can only be given to the last of sections i.e. <span style="color:red">`-A 1-2 -p 1-2`</span> is wrong, `-A 1 -p 1-2` will work.**
 
 If you don't specify any of the section it will print whole file.
+
+Indexes are case insensitive also you can use either roman numbers and arabic numbers

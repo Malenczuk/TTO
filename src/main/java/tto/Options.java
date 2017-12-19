@@ -8,6 +8,8 @@ import joptsimple.OptionSet;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Options {
     public final OptionSet optionSet;
@@ -60,18 +62,17 @@ public class Options {
         Sections section = Sections.File;
         boolean hasRange = false;
         boolean wrongRange = false;
-        Converter converter = new Converter();
+
 
         while ((section = section.next()) != null) {
             if (!optionSet.hasArgument(section.toString())) continue;
 
             String arg = optionSet.valueOf(section.toString()).toString();
-
-            if (arg.matches("^(\\w)+[-](\\w)+$")) {
+            if (arg.matches("^(\\d)*(\\D)*[-](\\d)*(\\D)*$")) {
                 String[] ranges = optionSet.valueOf(section.toString()).toString().split("[-]");
 
-                if (arg.matches("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})[-]M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$"))
-                    wrongRange = (converter.toNumber(ranges[0]) > converter.toNumber(ranges[1]));
+                if (arg.matches("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\\D*[-]M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\\D*$"))
+                    wrongRange = isWrongRange(rangesToNumeric(ranges));
 
                 else if (arg.matches("^(\\d)*(\\D)*[-](\\d)*(\\D)*$")) {
                     wrongRange = isWrongRange(ranges);
@@ -90,9 +91,9 @@ public class Options {
     private boolean isWrongRange(String[] ranges) {
         boolean wrongRange;
         int[] numeral = {0, 0};
-        if (ranges[0].matches("(\\d)+"))
+        if (ranges[0].matches("^(\\d)+.*"))
             numeral[0] = Integer.parseInt(ranges[0].replaceAll("(\\D)", ""));
-        if (ranges[1].matches("(\\d)+"))
+        if (ranges[1].matches("^(\\d)+.*"))
             numeral[1] = Integer.parseInt(ranges[1].replaceAll("(\\D)", ""));
         char[][] characters = {ranges[0].replaceAll("(\\d)", "").toCharArray(),
                 ranges[1].replaceAll("(\\d)", "").toCharArray()
@@ -102,11 +103,24 @@ public class Options {
             if (characters[0].length > characters[1].length) wrongRange = true;
             else if (characters[0].length == characters[1].length) {
                 for (int i = 0; i < characters[0].length && !wrongRange; i++) {
-                    wrongRange = ((int) characters[0][i]) > ((int) characters[1][i]);
+                    wrongRange = ((int) Character.toLowerCase(characters[0][i])) > ((int) Character.toLowerCase(characters[1][i]));
                 }
             }
         }
         return wrongRange;
+    }
+
+    private String[] rangesToNumeric(String[] ranges) throws ParseException {
+        Converter converter = new Converter();
+        Matcher matcher;
+        Pattern pattern = Pattern.compile("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})");
+        for (int i = 0; i < ranges.length; i++) {
+            matcher = pattern.matcher(ranges[i]);
+            if (matcher.find())
+                ranges[i] = (converter.toNumber(matcher.group()) + ranges[i].replaceFirst("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})", ""));
+        }
+
+        return ranges;
     }
 
 }

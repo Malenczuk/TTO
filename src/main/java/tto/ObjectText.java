@@ -1,6 +1,7 @@
 package tto;
 
 import com.frequal.romannumerals.Converter;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -13,7 +14,7 @@ public class ObjectText {
     public final ArrayList<String> text;
     public final ArrayList<ObjectText> subSections;
 
-    public ObjectText(Sections section, String index, String title, ArrayList<String> text,ArrayList<ObjectText> subSections) {
+    public ObjectText(Sections section, String index, String title, ArrayList<String> text, ArrayList<ObjectText> subSections) {
         this.section = section;
         this.index = createIndex(index);
         this.title = title;
@@ -38,7 +39,7 @@ public class ObjectText {
     }
 
     public ObjectText findObject(String index, Sections section) throws ParseException {
-        if (this.section == section && (this.index.equals(index) || this.checkRoman(index))) return this;
+        if (this.section == section && (this.index.equalsIgnoreCase(index) || this.checkRoman(index))) return this;
         if (this.section.ordinal() < this.searchDepth(section)) {
             ObjectText found = null;
             for (ObjectText subNode : this.subSections) {
@@ -49,9 +50,17 @@ public class ObjectText {
     }
 
     private boolean checkRoman(String ind) throws ParseException {
-        if (ind.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")) {
-            Converter converter = new Converter();
-            return this.index.equals(Integer.toString(converter.toNumber(ind)));
+        Converter converter = new Converter();
+        Matcher matcher;
+        Pattern pattern = Pattern.compile("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})");
+        if (ind.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\\D*$")) {
+            matcher = pattern.matcher(ind);
+            if (matcher.find())
+                return this.index.equalsIgnoreCase(Integer.toString(converter.toNumber(matcher.group())) + ind.replaceFirst("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})", ""));
+        } else if (this.index.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\\D*$")) {
+            matcher = pattern.matcher(this.index);
+            if (matcher.find())
+                return ind.equalsIgnoreCase(Integer.toString(converter.toNumber(matcher.group())) + this.index.replaceFirst("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})", ""));
         }
         return false;
     }
@@ -62,6 +71,6 @@ public class ObjectText {
     }
 
     public boolean indexEquals(String ind) throws ParseException {
-        return (this.index.equals(ind) || this.checkRoman(ind));
+        return (this.index.equalsIgnoreCase(ind) || this.checkRoman(ind));
     }
 }
