@@ -14,5 +14,6 @@ required/requires|Short|Long|Arguments|Description
 |`--Article`|`-s`|`--SubPoint`|i.e. `1`, `II`, `1-2`, `1a-1b`|Index or range of SubPoints to print
 |`--Article`|`-c`|`--Character`|i.e. `1`, `II`, `a-b`|Index or range of Charaters to print
 
-**Range can only be given to the last of sections i.e. <span style="color:red">`-A 1-2 -p 1-2`</span> is wrong, `-A 1 -p 1-2` will work**
-If you don't specify any of the section it will print whole file
+**Range can only be given to the last of sections i.e. <span style="color:red">`-A 1-2 -p 1-2`</span> is wrong, `-A 1 -p 1-2` will work.**
+
+If you don't specify any of the section it will print whole file.
