@@ -52,15 +52,15 @@ public class ObjectText {
     private boolean checkRoman(String ind) throws ParseException {
         Converter converter = new Converter();
         Matcher matcher;
-        Pattern pattern = Pattern.compile("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})");
-        if (ind.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\\D*$")) {
+        Pattern pattern = Pattern.compile("^[MCLXVI]+");
+        if (ind.matches("^[MCLXVI]+\\D*$")) {
             matcher = pattern.matcher(ind);
             if (matcher.find())
-                return this.index.equalsIgnoreCase(Integer.toString(converter.toNumber(matcher.group())) + ind.replaceFirst("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})", ""));
-        } else if (this.index.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\\D*$")) {
+                return this.index.equalsIgnoreCase(Integer.toString(converter.toNumber(matcher.group())) + ind.replaceFirst("^[MCLXVI]+", ""));
+        } else if (this.index.matches("^[MCLXVI]+\\D*$")) {
             matcher = pattern.matcher(this.index);
             if (matcher.find())
-                return ind.equalsIgnoreCase(Integer.toString(converter.toNumber(matcher.group())) + this.index.replaceFirst("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})", ""));
+                return ind.equalsIgnoreCase(Integer.toString(converter.toNumber(matcher.group())) + this.index.replaceFirst("^[MCLXVI]+", ""));
         }
         return false;
     }

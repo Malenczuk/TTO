@@ -68,15 +68,15 @@ public class Options {
             if (!optionSet.hasArgument(section.toString())) continue;
 
             String arg = optionSet.valueOf(section.toString()).toString();
-            if (arg.matches("^(\\d)*(\\D)*[-](\\d)*(\\D)*$")) {
+            if (arg.matches(".*[-].*")) {
                 String[] ranges = optionSet.valueOf(section.toString()).toString().split("[-]");
 
-                if (arg.matches("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\\D*[-]M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\\D*$"))
+                if (arg.matches("^([MCLXVI])+\\D*[-]([MCLXVI])+\\D*$"))
                     wrongRange = isWrongRange(rangesToNumeric(ranges));
 
-                else if (arg.matches("^(\\d)*(\\D)*[-](\\d)*(\\D)*$")) {
+                else if (arg.matches("^(\\d)+(\\D)*[-](\\d)+(\\D)*$") || arg.matches("^(\\D)+[-](\\D)+$")) {
                     wrongRange = isWrongRange(ranges);
-                }
+                } else throw new ArgumentException(arg + " wrong range");
 
                 if (wrongRange) throw new ArgumentException(arg + " seconds index must be equal or greater than first");
 
@@ -100,11 +100,15 @@ public class Options {
         };
         wrongRange = numeral[0] > numeral[1];
         if (numeral[0] == numeral[1]) {
-            if (characters[0].length > characters[1].length) wrongRange = true;
-            else if (characters[0].length == characters[1].length) {
-                for (int i = 0; i < characters[0].length && !wrongRange; i++) {
-                    wrongRange = ((int) Character.toLowerCase(characters[0][i])) > ((int) Character.toLowerCase(characters[1][i]));
+            if (characters[0].length != 0 && characters[1].length == 0) wrongRange = true;
+            else {
+                boolean good = true;
+                for (int i = 0; (i < characters[0].length && i < characters[1].length) && good; i++) {
+                    good = ((int) Character.toLowerCase(characters[0][i])) == ((int) Character.toLowerCase(characters[1][i]));
+                    if ((int) Character.toLowerCase(characters[0][i]) < (int) Character.toLowerCase(characters[1][i]))
+                        return false;
                 }
+                wrongRange = !good || (good && characters[0].length > characters[1].length);
             }
         }
         return wrongRange;
@@ -113,13 +117,12 @@ public class Options {
     private String[] rangesToNumeric(String[] ranges) throws ParseException {
         Converter converter = new Converter();
         Matcher matcher;
-        Pattern pattern = Pattern.compile("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})");
+        Pattern pattern = Pattern.compile("^[MCLXVI]+");
         for (int i = 0; i < ranges.length; i++) {
             matcher = pattern.matcher(ranges[i]);
             if (matcher.find())
-                ranges[i] = (converter.toNumber(matcher.group()) + ranges[i].replaceFirst("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})", ""));
+                ranges[i] = (converter.toNumber(matcher.group()) + ranges[i].replaceFirst("^[MCLXVI]+", ""));
         }
-
         return ranges;
     }
 
