@@ -1,7 +1,5 @@
 package tto;
 
-import java.util.regex.Pattern;
-
 public enum Sections {
     File,
     Section,

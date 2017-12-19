@@ -32,7 +32,7 @@ public class Parser {
                 }
             }
         } catch (FileNotFoundException e) {
-            System.err.println("File Not Found");
+            System.out.println("File Not Found");
             return null;
         } catch (IOException e) {
             System.out.println(e.getMessage());

@@ -26,7 +26,7 @@ public class Printer {
     private void contentPage(ObjectText node) throws ParseException{
         Sections section;
         if (options.optionSet.has("Section")) {
-            node = findObject(node, options.optionSet.valueOf("Section").toString(), section = Sections.Section, searchDepth(node, section));
+            node = node.findObject(options.optionSet.valueOf("Section").toString(), section = Sections.Section);
             if (node != null)
                 this.printContentsPage(node);
             else
@@ -44,11 +44,11 @@ public class Printer {
             if (node != null && options.optionSet.has(section.toString())) {
                 if (options.optionSet.valueOf(section.toString()).toString().matches("(\\d*\\D*)+[-](\\d*\\D*)+")) {
                     range = options.optionSet.valueOf(section.toString()).toString().split("[-]", 2);
-                    if (findObject(node, range[0], section, searchDepth(node,section))  == null) notFound(section, range[0]);
-                    if (findObject(node, range[1], section, searchDepth(node,section)) == null)  notFound(section, range[1]);
+                    if (node.findObject(range[0], section) == null) notFound(section, range[0]);
+                    if (node.findObject(range[1], section) == null) notFound(section, range[1]);
                     rangeSection = section;
                 } else {
-                    node = findObject(node, options.optionSet.valueOf(section.toString()).toString(), section, searchDepth(node,section));
+                    node = node.findObject(options.optionSet.valueOf(section.toString()).toString(), section);
                     if (node == null)
                         notFound(section, options.optionSet.valueOf(section.toString()).toString());
                 }
@@ -60,12 +60,6 @@ public class Printer {
             else printSection(node);
     }
 
-    private int searchDepth(ObjectText node, Sections section){
-        if(section.checkIfNewLine()) return node.section.ordinal()+1;
-        return section.ordinal();
-    }
-
-
     private void notFound(Sections section, String index) {
         String message = section.toString() + " with index " + index + " not found";
         while ((section = section.prev()) != Sections.File && section != null) {
@@ -76,24 +70,6 @@ public class Printer {
         toPrint.add(message);
     }
 
-
-    private ObjectText findObject(ObjectText node, String index, Sections section, int depth) throws ParseException {
-        if (node.section == section && (node.index.equals(index) || checkRoman(node.index, index))) return node;
-        if (node.section.ordinal() < depth){
-            ObjectText found = null;
-            for (ObjectText subNode : node.subSections) {
-                if ((found = findObject(subNode, index, section, depth)) != null) return found;
-            }
-        }
-        return null;
-    }
-
-    private boolean checkRoman(String nindex, String ind) throws ParseException{
-        if(ind.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")){
-            return nindex.equals(Integer.toString(converter.toNumber(ind)));
-        }
-        return false;
-    }
 
     private void printSection(ObjectText node) {
         int i = 0;
@@ -119,11 +95,11 @@ public class Printer {
 
     private boolean printRangeOfSection(ObjectText node, String from, String to, Sections section, boolean inRange) throws ParseException{
         if (node.section.equals(section)) {
-            if (node.index.equals(from) || checkRoman(node.index, from))
+            if (node.indexEquals(from))
                 inRange = true;
             if (inRange)
                 printSection(node);
-            if (node.index.equals(to) || checkRoman(node.index, to))
+            if (node.indexEquals(to))
                 inRange = false;
             return inRange;
         }

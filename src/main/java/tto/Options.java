@@ -53,28 +53,60 @@ public class Options {
         }
         if (optionSet.has("help")) optionParser.printHelpOn(System.out);
 
+        checkRanges();
+    }
+
+    private void checkRanges() throws ParseException, ArgumentException {
         Sections section = Sections.File;
         boolean hasRange = false;
+        boolean wrongRange = false;
+        Converter converter = new Converter();
+
         while ((section = section.next()) != null) {
-            if (optionSet.hasArgument(section.toString()) && optionSet.valueOf(section.toString()).toString().matches("(\\D*\\d*)+[-](\\D*\\d*)+")) {
+            if (!optionSet.hasArgument(section.toString())) continue;
+
+            String arg = optionSet.valueOf(section.toString()).toString();
+
+            if (arg.matches("^(\\w)+[-](\\w)+$")) {
                 String[] ranges = optionSet.valueOf(section.toString()).toString().split("[-]");
-                if (optionSet.valueOf(section.toString()).toString().matches("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})[-]M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")) {
-                    Converter converter = new Converter();
-                    if (converter.toNumber(ranges[0]) > converter.toNumber(ranges[1]))
-                        throw new ArgumentException(optionSet.valueOf(section.toString()) + " seconds index must be equal or greater than first");
+
+                if (arg.matches("^^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})[-]M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$"))
+                    wrongRange = (converter.toNumber(ranges[0]) > converter.toNumber(ranges[1]));
+
+                else if (arg.matches("^(\\d)*(\\D)*[-](\\d)*(\\D)*$")) {
+                    wrongRange = isWrongRange(ranges);
                 }
-                if (optionSet.valueOf(section.toString()).toString().matches("^(\\d)+[-](\\d)+$"))
-                    if (Integer.parseInt(ranges[0]) > Integer.parseInt(ranges[1]))
-                        throw new ArgumentException(optionSet.valueOf(section.toString()) + " seconds index must be equal or greater than first");
-                if (optionSet.valueOf(section.toString()).toString().matches("^(\\D)[-](\\D)$"))
-                    if (Character.getNumericValue(ranges[0].toCharArray()[0]) > Character.getNumericValue(ranges[1].toCharArray()[0]))
-                        throw new ArgumentException(optionSet.valueOf(section.toString()) + " seconds index must be equal or greater than first");
+
+                if (wrongRange) throw new ArgumentException(arg + " seconds index must be equal or greater than first");
+
                 if (hasRange) throw new ArgumentException("Only the last section's argument can be a range");
                 hasRange = true;
             }
 
 
         }
+    }
+
+    private boolean isWrongRange(String[] ranges) {
+        boolean wrongRange;
+        int[] numeral = {0, 0};
+        if (ranges[0].matches("(\\d)+"))
+            numeral[0] = Integer.parseInt(ranges[0].replaceAll("(\\D)", ""));
+        if (ranges[1].matches("(\\d)+"))
+            numeral[1] = Integer.parseInt(ranges[1].replaceAll("(\\D)", ""));
+        char[][] characters = {ranges[0].replaceAll("(\\d)", "").toCharArray(),
+                ranges[1].replaceAll("(\\d)", "").toCharArray()
+        };
+        wrongRange = numeral[0] > numeral[1];
+        if (numeral[0] == numeral[1]) {
+            if (characters[0].length > characters[1].length) wrongRange = true;
+            else if (characters[0].length == characters[1].length) {
+                for (int i = 0; i < characters[0].length && !wrongRange; i++) {
+                    wrongRange = ((int) characters[0][i]) > ((int) characters[1][i]);
+                }
+            }
+        }
+        return wrongRange;
     }
 
 }

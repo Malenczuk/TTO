@@ -15,14 +15,16 @@ public class TextToObject {
                 ArrayList<String> file = parser.prepareFile();
                 if (file != null) {
                     ObjectText OT = parser.parse(Sections.File, file);
-                    Printer printer = new Printer(options);
-                    for (String x : printer.print(OT)) {
-                        System.out.println(x);
-                    }
+                    if (OT != null) {
+                        Printer printer = new Printer(options);
+                        for (String x : printer.print(OT)) {
+                            System.out.println(x);
+                        }
+                    } else System.out.println("Error while parsing");
                 }
             }
         } catch (IOException | OptionException | ArgumentException | ParseException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }

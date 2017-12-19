@@ -20,7 +20,7 @@ class SectionsTest {
     @Test
     void toRegex() {
         Assert.assertEquals("", Sections.File.toRegex());
-        Assert.assertEquals("^DZIAŁ [IVXLCDM]+", Sections.Section.toRegex());
+        Assert.assertEquals("^DZIAŁ (\\S+)", Sections.Section.toRegex());
         Assert.assertEquals("^Rozdział (\\S+)", Sections.Chapter.toRegex());
         Assert.assertEquals("^([A-ZŁĄĆŚÓĘŃŻŹ,]+)( ([A-ZŁĄĆŚÓĘŃŻŹ,]+))*", Sections.SubChapter.toRegex());
         Assert.assertEquals("^Art[.] (\\d+)(\\w*)([–]+(\\d+)(\\w*))*[.]", Sections.Article.toRegex());
