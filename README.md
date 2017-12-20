@@ -1,4 +1,5 @@
-# TTO
+# Text To Object
+
 Options
 =======
 required/requires|Short|Long|Arguments|Description
@@ -18,4 +19,4 @@ required/requires|Short|Long|Arguments|Description
 
 If you don't specify any of the section it will print whole file.
 
-Indexes are case insensitive also you can use either roman numbers and arabic numbers
+For indexes you can use either roman numbers and arabic numbers
