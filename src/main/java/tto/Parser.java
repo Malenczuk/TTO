@@ -31,9 +31,6 @@ public class Parser {
                     this.file.add(line);
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("File Not Found");
-            return null;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         } finally {
@@ -42,6 +39,7 @@ public class Parser {
                     reader.close();
             } catch (IOException e) {
                 System.out.println(e.getMessage());
+                System.exit(0);
             }
         }
         return file;

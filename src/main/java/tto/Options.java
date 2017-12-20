@@ -91,25 +91,26 @@ public class Options {
     private boolean isWrongRange(String[] ranges) {
         boolean wrongRange;
         int[] numeral = {0, 0};
+
         if (ranges[0].matches("^(\\d)+.*"))
             numeral[0] = Integer.parseInt(ranges[0].replaceAll("(\\D)", ""));
+
         if (ranges[1].matches("^(\\d)+.*"))
             numeral[1] = Integer.parseInt(ranges[1].replaceAll("(\\D)", ""));
+
         char[][] characters = {ranges[0].replaceAll("(\\d)", "").toCharArray(),
                 ranges[1].replaceAll("(\\d)", "").toCharArray()
         };
         wrongRange = numeral[0] > numeral[1];
         if (numeral[0] == numeral[1]) {
-            if (characters[0].length != 0 && characters[1].length == 0) wrongRange = true;
-            else {
-                boolean good = true;
-                for (int i = 0; (i < characters[0].length && i < characters[1].length) && good; i++) {
-                    good = ((int) Character.toLowerCase(characters[0][i])) == ((int) Character.toLowerCase(characters[1][i]));
-                    if ((int) Character.toLowerCase(characters[0][i]) < (int) Character.toLowerCase(characters[1][i]))
-                        return false;
-                }
-                wrongRange = !good || (good && characters[0].length > characters[1].length);
+            if (characters[0].length != 0 && characters[1].length == 0) return true;
+            boolean equal = true;
+            for (int i = 0; i < characters[0].length && i < characters[1].length && equal; i++) {
+                equal = ((int) Character.toLowerCase(characters[0][i])) == ((int) Character.toLowerCase(characters[1][i]));
+                if ((int) Character.toLowerCase(characters[0][i]) < (int) Character.toLowerCase(characters[1][i]))
+                    return false;
             }
+            wrongRange = !equal || (equal && characters[0].length > characters[1].length);
         }
         return wrongRange;
     }
