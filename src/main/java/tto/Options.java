@@ -67,6 +67,7 @@ public class Options {
         while ((section = section.next()) != null) {
             if (!optionSet.hasArgument(section.toString())) continue;
 
+            if (hasRange) throw new ArgumentException("Only the last section's argument can be a range");
             String arg = optionSet.valueOf(section.toString()).toString();
             if (arg.matches(".*[-].*")) {
                 String[] ranges = optionSet.valueOf(section.toString()).toString().split("[-]");
@@ -79,8 +80,6 @@ public class Options {
                 } else throw new ArgumentException(arg + " wrong range");
 
                 if (wrongRange) throw new ArgumentException(arg + " seconds index must be equal or greater than first");
-
-                if (hasRange) throw new ArgumentException("Only the last section's argument can be a range");
                 hasRange = true;
             }
 

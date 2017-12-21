@@ -13,7 +13,7 @@ class ParserTest {
 
     @Test
     void prepareFile() {
-        Parser parser = new Parser("src" + File.separator + "test" + File.separator + "java" + File.separator + "tto" + File.separator + "test.txt");
+        Parser parser = new Parser("src" + File.separator + "test" + File.separator + "resources" + File.separator + "tto" + File.separator + "test.txt");
         ArrayList<String> file = parser.prepareFile();
         String[] test = {"USTAWA", "z dnia 16 lutego 2007 r.", "o ochronie konkurencji i konsumentów", "DZIAŁ I",
                 "Przepisy ogólne", "Rozdział 1", "Zakaz nadużywania pozycji dominującej", "Art. 1.", "1.",
@@ -26,7 +26,7 @@ class ParserTest {
 
     @Test
     void parse() {
-        Parser parser = new Parser("src" + File.separator + "test" + File.separator + "java" + File.separator + "tto" + File.separator + "test.txt");
+        Parser parser = new Parser("src" + File.separator + "test" + File.separator + "resources" + File.separator + "tto" + File.separator + "test.txt");
         String[] test = {"USTAWA", "z dnia 16 lutego 2007 r.", "o ochronie konkurencji i konsumentów", "DZIAŁ I",
                 "Przepisy ogólne", "Rozdział 1", "Zakaz nadużywania pozycji dominującej", "Art. 1.", "1.",
                 "Ustawa określa warunki rozwoju i ochrony", "konkurencji oraz zasady", "1)",
